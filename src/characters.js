@@ -19,8 +19,8 @@ export const BASE_CHARACTERS = [
 ].map((def) => ({ ...TUNING, hasBun: false, eyeShape: 'circle', ...def }));
 
 // Built-in designs, then the project's saved file, then edits saved in this browser.
-const projectCast = mergeConfig(BASE_CHARACTERS, savedInProject);
-export const CHARACTERS = mergeConfig(projectCast, loadSavedConfig());
+export const DEFAULT_CHARACTERS = mergeConfig(BASE_CHARACTERS, savedInProject);
+export const CHARACTERS = mergeConfig(DEFAULT_CHARACTERS, loadSavedConfig());
 
 /* ---------- Face ---------- */
 

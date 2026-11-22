@@ -1,6 +1,6 @@
 // Standalone character editor. Edits are saved in the browser and picked up by the game.
 import * as THREE from 'three';
-import { BASE_CHARACTERS, buildCharacter, CHARACTERS } from '../characters.js';
+import { BASE_CHARACTERS, buildCharacter, CHARACTERS, DEFAULT_CHARACTERS } from '../characters.js';
 import {
   clearSavedConfig, COLORS, configFileText, configLink, diffConfig, EXPRESSIONS, EYE_SHAPES, HILL_GROUP, mergeConfig, parseConfigText, saveConfig, SHARED_KEYS, SLIDERS,
 } from '../characterSchema.js';
@@ -199,12 +199,12 @@ function frame(now) {
 /* ---------- Controls ---------- */
 
 const updatePlayLink = () => {
-  const config = diffConfig(BASE_CHARACTERS, cast);
+  const config = diffConfig(DEFAULT_CHARACTERS, cast);
   $('play-hill').href = configLink(`index.html?character=${BASE_CHARACTERS[index].id}`, config);
 };
 
 const persist = () => {
-  const ok = saveConfig(diffConfig(BASE_CHARACTERS, cast));
+  const ok = saveConfig(diffConfig(DEFAULT_CHARACTERS, cast));
   updatePlayLink();
   $('status').textContent = ok ? 'Saved' : 'Could not save. Use Download.';
 };
@@ -406,14 +406,14 @@ $('apply-all').addEventListener('click', () => {
 });
 
 $('reset-one').addEventListener('click', () => {
-  cast[index] = { ...BASE_CHARACTERS[index] };
+  cast[index] = { ...DEFAULT_CHARACTERS[index] };
   persist();
   refresh();
 });
 
 $('reset-all').addEventListener('click', () => {
-  if (!confirm('Reset all characters to their original designs?')) return;
-  BASE_CHARACTERS.forEach((c, i) => { cast[i] = { ...c }; });
+  if (!confirm('Reset all characters to their default designs?')) return;
+  DEFAULT_CHARACTERS.forEach((c, i) => { cast[i] = { ...c }; });
   clearSavedConfig();
   updatePlayLink();
   $('status').textContent = 'Saved';
