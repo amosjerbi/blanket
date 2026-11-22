@@ -58,7 +58,7 @@ export const COLORS = [
   { key: 'trim', label: 'Accessories' },
 ];
 
-// What "Apply to all" copies. Hand sizes stay personal, since Cutie's is a boxing glove.
+// What "Apply to all" copies. Hand sizes stay personal.
 export const SHARED_KEYS = [...SLIDERS.map((s) => s.key).filter((k) => k !== 'handSize' && k !== 'hillHandSize'), 'expression', 'eyeShape', 'hasBun'];
 
 const COLOR_RE = /^#[0-9a-f]{6}$/i;
