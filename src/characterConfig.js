@@ -13,10 +13,40 @@ export default {
     "expression": "smile",
     "eyeShape": "half"
   },
+  "ren": {
+    "headSize": 1.32,
+    "bodySize": 1.07,
+    "eyeHeight": -0.16,
+    "eyeRotation": -15,
+    "irisSize": 1.46,
+    "mouthSize": 0.71,
+    "mouthHeight": 0.09,
+    "blush": 1.47,
+    "expression": "smile",
+    "eyeShape": "half"
+  },
   "mara": {
-    "expression": "grin"
+    "headSize": 1.32,
+    "bodySize": 1.07,
+    "eyeHeight": -0.16,
+    "eyeRotation": -15,
+    "irisSize": 1.46,
+    "mouthSize": 0.71,
+    "mouthHeight": 0.09,
+    "blush": 1.47,
+    "expression": "sparkle",
+    "eyeShape": "half"
   },
   "vera": {
-    "expression": "grin"
+    "headSize": 1.32,
+    "bodySize": 1.07,
+    "eyeHeight": -0.16,
+    "eyeRotation": -15,
+    "irisSize": 1.46,
+    "mouthSize": 0.71,
+    "mouthHeight": 0.09,
+    "blush": 1.47,
+    "expression": "smile",
+    "eyeShape": "half"
   }
 };
