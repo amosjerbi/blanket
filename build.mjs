@@ -1,4 +1,4 @@
-// Bundles Blanket Hill into one self-contained index.html.
+// Bundles the game and character editor, each as one self-contained file.
 import { build } from 'esbuild';
 import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
@@ -41,3 +41,4 @@ console.log(`${output} ${(html.length / 1024).toFixed(0)} KB`);
 }
 
 await bundle('blanket', 'index.html');
+await bundle('editor', 'character-editor.html');

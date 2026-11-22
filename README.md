@@ -8,6 +8,12 @@ Open `index.html` in a browser. It is one self-contained file and needs no serve
 
 Drag on the screen or use the arrow keys or WASD to roll.
 
+## Customize characters
+
+Open `character-editor.html` to change each character's face, colors, proportions, wiggly arms and size. Edits save in your browser. Press **Test in game** to play with them.
+
+Use **Download** to save your edits as `characterConfig.js`. To make them permanent, replace `src/characterConfig.js` with it and run the build.
+
 ## Develop
 
 ```sh
@@ -15,6 +21,6 @@ npm install
 npm run build
 ```
 
-The build bundles `src/blanket` into `index.html`. Run it after any source change.
+The build bundles `src/blanket` into `index.html` and `src/editor` into `character-editor.html`. Run it after any source change.
 
 Three.js and the Silkscreen font are included in `vendor/` with their licenses.

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#93c7f8">
+  <title>Blanket Hill Character Editor</title>
+  <style>/*__CSS__*/</style>
+</head>
+<body>
+  <main id="app">
+    <section id="stage" aria-label="Character preview">
+      <canvas id="view" aria-label="3D character preview. Drag to rotate, scroll to zoom."></canvas>
+      <div id="view-top">
+        <div class="seg" role="group" aria-label="Pose">
+          <button data-pose="hill" class="on">Arms up</button>
+          <button data-pose="wrapped">Wrapped</button>
+        </div>
+        <div class="seg" role="group" aria-label="Camera">
+          <button data-cam="body" class="on">Body</button>
+          <button data-cam="face">Face</button>
+        </div>
+      </div>
+      <div id="view-bottom">
+        <div class="seg" role="group" aria-label="Render style">
+          <button data-style="pixel" class="on">Pixel</button>
+          <button data-style="smooth">Smooth</button>
+        </div>
+        <button id="spin" class="chip on" aria-pressed="true">Auto spin</button>
+      </div>
+    </section>
+
+    <aside id="panel" aria-label="Character settings">
+      <header>
+        <h1>Characters</h1>
+        <span id="status" role="status">Saved</span>
+      </header>
+      <nav id="tabs" aria-label="Choose character"></nav>
+      <div id="controls"></div>
+      <footer>
+        <button id="apply-all">Apply to all</button>
+        <div class="row">
+          <button id="reset-one">Reset character</button>
+          <button id="reset-all">Reset all</button>
+        </div>
+        <div class="row">
+          <button id="export">Download</button>
+          <button id="import">Import</button>
+          <input id="import-file" type="file" accept=".js,.json,text/javascript,application/json" hidden>
+        </div>
+        <a id="play-hill" class="primary" href="index.html">Test in game</a>
+      </footer>
+    </aside>
+  </main>
+  <script type="module">/*__JS__*/</script>
+</body>
+</html>
