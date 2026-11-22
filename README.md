@@ -29,3 +29,7 @@ npm run build
 The build bundles `src/blanket` into `index.html` and `src/editor` into `character-editor.html`. Run it after any source change.
 
 Three.js and the Silkscreen font are included in `vendor/` with their licenses.
+
+## Credits
+
+Grass sound: [walking in the grass.wav](https://freesound.org/people/kwahmah_02/sounds/245030/) by [kwahmah_02](https://freesound.org/people/kwahmah_02/), licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/). Compressed to MP3, crossfaded into a loop, and varied in volume and speed during play.
