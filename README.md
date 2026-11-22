@@ -2,6 +2,17 @@
 
 Roll around a steep green hill and wrap yourself in every scattered blanket. Clear phases of 10, 20, 40 and 60 blankets. Puddles knock your outer blanket back onto the hill.
 
+## Screenshots
+
+<p>
+  <img src="screenshots/menu.png" alt="Blanket Hill menu with Mochi raising wiggly arms" width="24%">
+  <img src="screenshots/rolling.png" alt="Rolling toward a checkered blanket on the green hill" width="24%">
+  <img src="screenshots/puddle.png" alt="A puddle knocking off one blanket" width="24%">
+  <img src="screenshots/snug.png" alt="A finished roll of 60 colorful blankets" width="24%">
+</p>
+
+<img src="screenshots/editor.png" alt="Character editor showing Mochi and her settings" width="100%">
+
 ## Play
 
 Open `index.html` in a browser. It is one self-contained file and needs no server.
