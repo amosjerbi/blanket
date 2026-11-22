@@ -25,18 +25,26 @@
       <p id="snug-count"></p>
     </section>
 
-    <section id="menu" class="screen">
-      <h1 class="title">Blanket<br>Hill</h1>
-      <p class="sub" id="char-tag"></p>
-      <div class="bottom">
-        <div class="picker">
-          <button class="square" id="char-prev" aria-label="Previous character">&lt;</button>
-          <div id="char-name" role="status"></div>
-          <button class="square" id="char-next" aria-label="Next character">&gt;</button>
-        </div>
-        <div id="char-dots" aria-hidden="true"></div>
+    <section id="menu" class="screen" aria-label="Start menu">
+      <button class="square" id="btn-sound" aria-pressed="true" aria-label="Sound on">
+        <svg viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges">
+          <path d="M2 6h3V5h1V4h1V3h1v10H7v-1H6v-1H5v-1H2z"/>
+          <path class="waves" d="M10 6h1v4h-1zM12 4h1v8h-1zM14 3h1v10h-1z"/>
+          <path class="mute" d="M10 5h1v1h1v1h1V6h1V5h1v1h-1v1h-1v2h1v1h1v1h-1v-1h-1V9h-1v1h-1v1h-1v-1h1V9h1V7h-1V6h-1z"/>
+        </svg>
+      </button>
+      <header class="brand">
+        <h1 class="title">Blanket<br>Hill</h1>
+        <div class="ribbon" aria-hidden="true"></div>
+      </header>
+      <button class="square" id="char-prev" aria-label="Previous character">&lt;</button>
+      <button class="square" id="char-next" aria-label="Next character">&gt;</button>
+      <div class="who">
+        <div id="char-name" role="status"></div>
+        <a id="customize" href="character-editor.html">Customize</a>
+      </div>
+      <div class="actions">
         <button class="primary" id="btn-start">Start rolling</button>
-        <button class="ghost" id="btn-sound" aria-pressed="true">Sound on</button>
       </div>
     </section>
   </div>

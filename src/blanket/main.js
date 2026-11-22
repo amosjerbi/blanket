@@ -102,7 +102,6 @@ class Game {
   }
 
   buildPicker() {
-    $('char-dots').replaceChildren(...CHARACTERS.map(() => document.createElement('i')));
     $('char-prev').addEventListener('click', () => this.cycleCharacter(-1));
     $('char-next').addEventListener('click', () => this.cycleCharacter(1));
   }
@@ -117,8 +116,6 @@ class Game {
     const def = CHARACTERS[index];
     this.player.setCharacter(def);
     $('char-name').textContent = def.name;
-    $('char-tag').textContent = def.tag;
-    [...$('char-dots').children].forEach((dot, i) => dot.classList.toggle('on', i === index));
     try { localStorage.setItem(CHARACTER_KEY, def.id); } catch { /* Storage can be unavailable. */ }
   }
 
@@ -152,19 +149,20 @@ class Game {
 
   bindInput() {
     $('btn-start').addEventListener('click', () => this.start());
-    $('btn-sound').addEventListener('click', () => {
-      const on = this.sound.toggle();
-      $('btn-sound').textContent = on ? 'Sound on' : 'Sound off';
+    const showSound = (on) => {
+      $('btn-sound').setAttribute('aria-label', on ? 'Sound on' : 'Sound off');
       $('btn-sound').setAttribute('aria-pressed', on);
-    });
-    $('btn-sound').textContent = this.sound.enabled ? 'Sound on' : 'Sound off';
+    };
+    $('btn-sound').addEventListener('click', () => showSound(this.sound.toggle()));
+    showSound(this.sound.enabled);
 
     addEventListener('keydown', (e) => {
       if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'KeyA', 'KeyD', 'KeyW', 'KeyS'].includes(e.code)) {
         this.keys.add(e.code);
         e.preventDefault();
       }
-      if (e.code === 'Enter' && this.mode === 'menu') this.start();
+      // Enter on a focused control should use that control, not start the game.
+      if (e.code === 'Enter' && this.mode === 'menu' && !e.target.closest?.('button, a')) this.start();
       if (!e.repeat && (e.code === 'ArrowLeft' || e.code === 'KeyA')) this.cycleCharacter(-1);
       if (!e.repeat && (e.code === 'ArrowRight' || e.code === 'KeyD')) this.cycleCharacter(1);
     });
@@ -349,7 +347,7 @@ class Game {
       const a = Math.sin(this.time * 0.25) * 0.18;
       const size = player.def.hillSize;
       target.set(at.x + Math.sin(a) * 9.4 * size, at.y + 0.7 * size, at.z + Math.cos(a) * 9.4 * size);
-      focus.set(at.x, at.y - 0.9 * size, at.z);
+      focus.set(at.x, at.y, at.z); // Keeps the character in the middle of the screen.
     } else if (this.mode === 'intro') {
       const back = ease(INTRO_SECONDS - 0.7, INTRO_SECONDS, this.clock);
       const near = 9 * player.def.hillSize;
