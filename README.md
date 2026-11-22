@@ -1,6 +1,6 @@
 # Blanket Hill
 
-Roll around a steep green hill and wrap yourself in every scattered blanket. Collect 10 blankets to reach the 20-blanket phase. Puddles knock your outer blanket back onto the hill.
+Roll around a steep green hill and wrap yourself in every scattered blanket. Clear phases of 10, 20, 40 and 60 blankets. Puddles knock your outer blanket back onto the hill.
 
 ## Play
 

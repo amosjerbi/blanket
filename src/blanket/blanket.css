@@ -28,6 +28,8 @@ button:focus-visible { outline: 2px solid var(--paper); outline-offset: 2px; }
 #pips { display: grid; grid-template-columns: repeat(10, 14px); gap: 3px; padding: 4px; background: var(--ink); }
 #pips i { width: 14px; height: 14px; background: var(--mid); }
 #pips i.on { background: var(--pip); }
+#pips.dense { grid-template-columns: repeat(20, 8px); gap: 2px; }
+#pips.dense i { width: 8px; height: 8px; }
 #count { padding: 2px 6px; background: var(--ink); font-size: 12px; font-variant-numeric: tabular-nums; }
 #toast { margin-top: 8px; padding: 3px 8px; background: #5bc6fa; color: var(--ink); font-size: 15px; font-weight: 700; }
 #hint { position: absolute; left: 50%; top: calc(100dvh - env(safe-area-inset-top) - 52px); width: max-content; max-width: 92%; margin: 0; padding: 3px 6px; transform: translateX(-50%); background: var(--ink); font-size: 10px; text-align: center; }

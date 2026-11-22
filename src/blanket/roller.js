@@ -12,8 +12,8 @@ const MAX_SPEED = 26;
 
 const shortAngle = (a) => Math.atan2(Math.sin(a), Math.cos(a));
 
-// Later blankets add less girth, so a 20-blanket bundle still fits the view.
-const wrapRadius = (n) => WRAP_START + WRAP_STEP * Math.min(n, 10) + 0.09 * Math.max(n - 10, 0);
+// Later blankets add less girth, so a 60-blanket bundle still fits the view.
+const wrapRadius = (n) => WRAP_START + WRAP_STEP * Math.min(n, 10) + 0.09 * Math.max(Math.min(n, 20) - 10, 0) + 0.04 * Math.max(n - 20, 0);
 
 export class Roller {
   constructor(scene) {
@@ -152,7 +152,7 @@ export class Roller {
     this.layers.forEach((layer, i) => {
       layer.radius += (layer.goal - layer.radius) * (1 - Math.exp(-11 * dt));
       // Older layers sit a little longer, so the ends show each blanket as a ring.
-      layer.mesh.scale.set(layer.radius, this.wrapLength + (count - i) * 0.035, layer.radius);
+      layer.mesh.scale.set(layer.radius, this.wrapLength + (count - i) * Math.min(0.035, 0.7 / count), layer.radius);
       outer = Math.max(outer, layer.radius);
     });
     this.radius += (outer - this.radius) * (1 - Math.exp(-9 * dt));

@@ -3,9 +3,15 @@ import * as THREE from 'three';
 import { toonOptions } from '../models.js';
 import { heightAt } from './terrain.js';
 
-// Phase 1 is 10 blankets. Every phase after that is 20.
-export const PHASES = [{ blankets: 10, puddles: 6 }, { blankets: 20, puddles: 10 }];
-export const MAX_BLANKETS = 20;
+// The last phase repeats once it is reached.
+export const PHASES = [
+  { blankets: 10, puddles: 6 },
+  { blankets: 20, puddles: 10 },
+  { blankets: 40, puddles: 14 },
+  { blankets: 60, puddles: 18 },
+];
+const MAX_BLANKETS = PHASES.at(-1).blankets;
+const WAVE_RANGE = 48; // Only nearby blankets ripple, which keeps big phases smooth.
 const WIDTH = 4.6;
 const LENGTH = 3.6;
 const SEGMENTS = 10;
@@ -26,9 +32,24 @@ export const DESIGNS = [
   { a: '#f4d35e', b: '#d95f43', kind: 'dots' },
 ];
 
-// The second ten swap each design's colours and pattern, so all twenty look different.
+// The second ten swap each design's colours and pattern. The rest pair the same colours in new ways.
 const KINDS = ['stripes', 'check', 'dots'];
-const ALL_DESIGNS = [...DESIGNS, ...DESIGNS.map((d) => ({ a: d.b, b: d.a, kind: KINDS[(KINDS.indexOf(d.kind) + 1) % 3] }))];
+const SHADES = [...new Set(DESIGNS.flatMap((d) => [d.a, d.b]))];
+const luma = (hex) => {
+  const n = parseInt(hex.slice(1), 16);
+  return (0.3 * (n >> 16) + 0.59 * ((n >> 8) & 255) + 0.11 * (n & 255)) / 255;
+};
+const mixedDesign = (i) => {
+  const a = SHADES[i % SHADES.length];
+  let step = 5 + 2 * Math.floor(i / SHADES.length);
+  while (Math.abs(luma(a) - luma(SHADES[(i + step) % SHADES.length])) < 0.18) step++;
+  return { a, b: SHADES[(i + step) % SHADES.length], kind: KINDS[(i + Math.floor(i / 3)) % 3] };
+};
+const ALL_DESIGNS = [
+  ...DESIGNS,
+  ...DESIGNS.map((d) => ({ a: d.b, b: d.a, kind: KINDS[(KINDS.indexOf(d.kind) + 1) % 3] })),
+  ...Array.from({ length: MAX_BLANKETS - 20 }, (_, i) => mixedDesign(i)),
+];
 
 export function patternTexture({ a, b, kind }) {
   const S = 128;
@@ -59,7 +80,7 @@ export function patternTexture({ a, b, kind }) {
 
 export class Blankets {
   constructor(scene) {
-    this.items = ALL_DESIGNS.slice(0, MAX_BLANKETS).map((design) => {
+    this.items = ALL_DESIGNS.map((design) => {
       const map = patternTexture(design);
       const geometry = new THREE.PlaneGeometry(WIDTH, LENGTH, SEGMENTS, SEGMENTS);
       geometry.rotateX(-Math.PI / 2);
@@ -147,12 +168,15 @@ export class Blankets {
     const taken = [];
     for (const item of this.items) {
       if (item.waiting) {
-        const pos = item.mesh.geometry.attributes.position;
-        for (let i = 0; i < pos.count; i++) {
-          const edge = Math.abs(flatEdge(item.flat[i * 3], WIDTH));
-          pos.setY(i, item.rest[i] + 0.06 * edge * Math.sin(time * 2.1 + i * 0.37));
+        const center = player.root.position;
+        if (Math.hypot(item.x - center.x, item.z - center.z) < WAVE_RANGE) {
+          const pos = item.mesh.geometry.attributes.position;
+          for (let i = 0; i < pos.count; i++) {
+            const edge = Math.abs(flatEdge(item.flat[i * 3], WIDTH));
+            pos.setY(i, item.rest[i] + 0.06 * edge * Math.sin(time * 2.1 + i * 0.37));
+          }
+          pos.needsUpdate = true;
         }
-        pos.needsUpdate = true;
         if (Math.hypot(item.x - player.x, item.z - player.z) < REACH + player.radius * 0.8) {
           item.waiting = false;
           item.fly = FLY_SECONDS;

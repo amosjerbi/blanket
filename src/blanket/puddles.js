@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import { heightAt } from './terrain.js';
 
-export const MAX_PUDDLES = 10;
+export const MAX_PUDDLES = 18;
 // The dither game's pond colours: shore, water and ripple.
 export const PUDDLE_COLORS = ['#f0ece6', '#5bc6fa', '#84d8fc'];
 const RINGS = 5;

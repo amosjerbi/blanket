@@ -2,9 +2,9 @@
 import * as THREE from 'three';
 import { CHARACTERS } from '../characters.js';
 import { DitherPipeline, HERO_LAYER } from '../dither/pipeline.js';
-import { Blankets, DESIGNS, MAX_BLANKETS, PHASES } from './blankets.js';
-import { MAX_CLEARINGS, Scenery, SKY_COLORS } from './grass.js';
-import { MAX_PUDDLES, PUDDLE_COLORS, Puddles } from './puddles.js';
+import { Blankets, DESIGNS, PHASES } from './blankets.js';
+import { Scenery, SKY_COLORS } from './grass.js';
+import { PUDDLE_COLORS, Puddles } from './puddles.js';
 import { Roller } from './roller.js';
 import { Sound } from './sound.js';
 import { heightAt } from './terrain.js';
@@ -51,7 +51,6 @@ class Game {
     this.scene.add(sky, sun);
     for (const light of [sky, sun]) light.layers.enable(HERO_LAYER);
 
-    if (MAX_CLEARINGS < MAX_BLANKETS + MAX_PUDDLES) throw new Error('Grass needs a clearing for each blanket and puddle');
     this.scenery = new Scenery(this.scene, calm);
     this.blankets = new Blankets(this.scene);
     this.puddles = new Puddles(this.scene);
@@ -136,8 +135,9 @@ class Game {
       pip.style.setProperty('--pip', item.design.a);
       return pip;
     }));
+    $('pips').classList.toggle('dense', count > 20);
     this.showCount(0);
-    this.scenery.setClearings(blankets.items, puddles.items);
+    this.scenery.setClearings(blankets.items, puddles.items, player.x, player.z);
   }
 
   showCount(count) {
@@ -252,7 +252,8 @@ class Game {
       this.rounds++;
       this.sound.snug();
       $('snug').classList.remove('hidden');
-      $('snug-count').textContent = this.rounds === 1 ? `Next up: ${PHASES[1].blankets} blankets` : `Wrapped up ${this.rounds} times`;
+      const next = PHASES[Math.min(this.phase + 1, PHASES.length - 1)].blankets;
+      $('snug-count').textContent = `Next up: ${next} blankets`;
     }
   }
 
@@ -316,7 +317,7 @@ class Game {
       this.toastTimer -= dt;
       if (this.toastTimer <= 0) $('toast').classList.add('hidden');
     }
-    this.scenery.setClearings(blankets.items, this.puddles.items);
+    this.scenery.setClearings(blankets.items, this.puddles.items, player.x, player.z);
     this.updatePointer();
     this.updateCamera(dt);
     const ahead = { x: Math.sin(this.heading), z: Math.cos(this.heading) };

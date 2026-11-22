@@ -5,7 +5,7 @@ import { HILL_GLSL } from './terrain.js';
 const BLADES = 9000;
 const TILE = 76;
 const ROWS = 7;
-export const MAX_CLEARINGS = 30; // Up to 20 blankets and 10 puddles.
+export const MAX_CLEARINGS = 30; // The nearest blankets and puddles clear their grass.
 
 /** A flat finger: straight sides and a round top, with base at y = 0. */
 function fingerGeometry() {
@@ -221,11 +221,11 @@ export class Scenery {
     this.player.value.set(player.x, player.z, player.radius);
   }
 
-  setClearings(blankets, puddles) {
+  setClearings(blankets, puddles, x, z) {
     const open = [
       ...blankets.filter((b) => b.waiting || b.fly > 0 || b.landing > 0).map((b) => [b.x, b.z, 3.7]),
       ...puddles.filter((p) => p.active).map((p) => [p.x, p.z, p.radius * 1.3]),
-    ];
+    ].sort((a, b) => Math.hypot(a[0] - x, a[1] - z) - Math.hypot(b[0] - x, b[1] - z));
     this.clearings.value.forEach((v, i) => {
       if (open[i]) v.set(...open[i]);
       else v.set(0, 0, 0);
