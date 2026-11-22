@@ -264,13 +264,13 @@ class Game {
     const from = player.root.position.clone();
     const item = player.peel();
     if (!item) {
-      this.toast('Splash!');
+      this.toast('Splashed!');
       return;
     }
     blankets.drop(item, from, player.x, player.z, puddles.active);
     $('pips').children[blankets.items.indexOf(item)].classList.remove('on');
     this.showCount(player.layers.length);
-    this.toast('-1 blanket');
+    this.toast('Splashed!');
   }
 
   newRound() {

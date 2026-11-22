@@ -54,7 +54,7 @@ button:focus-visible { outline: 2px solid var(--paper); outline-offset: 2px; }
 #count { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 2px 6px; font-variant-numeric: tabular-nums; text-shadow: 2px 2px 0 var(--ink); }
 #count-amount { font-size: 26px; font-weight: 700; line-height: 1.05; }
 #count-phase { font-size: 13px; line-height: 1.1; }
-#toast { margin-top: 8px; padding: 3px 8px; background: #5bc6fa; color: var(--ink); font-size: 15px; font-weight: 700; }
+#toast { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); color: #fff; font-size: 26px; font-weight: 700; line-height: 1.05; text-align: center; text-shadow: 2px 2px 0 var(--ink); pointer-events: none; }
 #hint { position: absolute; left: 50%; top: calc(100dvh - env(safe-area-inset-top) - 52px); width: max-content; max-width: 92%; margin: 0; padding: 3px 6px; transform: translateX(-50%); background: var(--ink); font-size: 10px; text-align: center; }
 #hint.gone { display: none; }
 
