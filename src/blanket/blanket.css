@@ -1,0 +1,41 @@
+@font-face { font-family: Silk; font-weight: 400; src: url(data:font/woff2;base64,__FONT_400__) format("woff2"); }
+@font-face { font-family: Silk; font-weight: 700; src: url(data:font/woff2;base64,__FONT_700__) format("woff2"); }
+:root { --ink: #262418; --paper: #fbf7f0; --mid: #7a6a4f; --accent: #f2c14e; --plum: #94436f; }
+* { box-sizing: border-box; border-radius: 0; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--ink); color: var(--paper); font-family: Silk, ui-monospace, monospace; overscroll-behavior: none; user-select: none; -webkit-user-select: none; }
+#stage { position: relative; height: 100dvh; width: min(100vw, calc(100dvh * 10 / 16)); margin: 0 auto; overflow: hidden; background: var(--ink); }
+#game { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; image-rendering: pixelated; }
+.hidden { display: none !important; }
+button { font: inherit; color: inherit; border: 0; cursor: pointer; touch-action: manipulation; }
+button:focus-visible { outline: 2px solid var(--paper); outline-offset: 2px; }
+
+.screen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; text-align: center; padding: calc(env(safe-area-inset-top) + 40px) 22px calc(env(safe-area-inset-bottom) + 20px); pointer-events: none; }
+.screen button { pointer-events: auto; }
+.bottom { margin-top: auto; width: min(100%, 340px); display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.title { margin: 0; font-weight: 700; font-size: clamp(40px, 12.5vw, 56px); line-height: .95; text-shadow: 3px 3px 0 var(--ink); }
+.sub { margin: 10px 0 0; padding: 3px 6px; font-size: 11px; background: var(--ink); }
+.primary { width: 100%; min-height: 54px; background: var(--paper); color: var(--ink); font-size: 18px; font-weight: 700; box-shadow: 4px 4px 0 var(--ink); }
+.primary:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--ink); }
+.ghost { width: 100%; min-height: 44px; background: var(--ink); font-size: 13px; }
+.square { width: 44px; height: 44px; flex: none; background: var(--ink); font-size: 15px; }
+.picker { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+#char-name { padding: 4px 10px; background: var(--ink); font-size: 20px; font-weight: 700; }
+#char-dots { display: flex; gap: 6px; padding: 4px 6px; background: var(--ink); }
+#char-dots i { width: 6px; height: 6px; background: var(--mid); }
+#char-dots i.on { background: var(--paper); }
+
+#hud { position: absolute; left: 0; right: 0; top: calc(env(safe-area-inset-top) + 10px); display: flex; flex-direction: column; align-items: center; gap: 4px; pointer-events: none; }
+#pips { display: grid; grid-template-columns: repeat(10, 14px); gap: 3px; padding: 4px; background: var(--ink); }
+#pips i { width: 14px; height: 14px; background: var(--mid); }
+#pips i.on { background: var(--pip); }
+#count { padding: 2px 6px; background: var(--ink); font-size: 12px; font-variant-numeric: tabular-nums; }
+#toast { margin-top: 8px; padding: 3px 8px; background: #5bc6fa; color: var(--ink); font-size: 15px; font-weight: 700; }
+#hint { position: absolute; left: 50%; top: calc(100dvh - env(safe-area-inset-top) - 52px); width: max-content; max-width: 92%; margin: 0; padding: 3px 6px; transform: translateX(-50%); background: var(--ink); font-size: 10px; text-align: center; }
+#hint.gone { display: none; }
+
+#stick { position: absolute; width: 116px; height: 116px; margin: -58px 0 0 -58px; background: rgba(38, 36, 24, .3); box-shadow: inset 0 0 0 2px var(--paper); pointer-events: none; }
+#stick-thumb { position: absolute; left: 34px; top: 34px; width: 48px; height: 48px; background: var(--paper); }
+
+#snug { position: absolute; left: 0; right: 0; top: 19%; text-align: center; pointer-events: none; }
+#snug h2 { margin: 0; font-size: clamp(28px, 9vw, 38px); font-weight: 700; text-shadow: 3px 3px 0 var(--ink); }
+#snug p { display: inline-block; margin: 6px 0 0; padding: 3px 6px; background: var(--ink); font-size: 11px; }

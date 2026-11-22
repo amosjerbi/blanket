@@ -1,0 +1,13 @@
+{
+  "name": "blanket-hill",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Roll down a steep green hill and wrap yourself in every blanket.",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  }
+}
