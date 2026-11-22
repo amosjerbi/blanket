@@ -138,7 +138,8 @@ class Game {
   }
 
   showCount(count) {
-    $('count').textContent = `Phase ${this.rounds + 1} - ${count} of ${this.goal}`;
+    $('count-amount').textContent = `${count} of ${this.goal}`;
+    $('count-phase').textContent = `Phase ${this.rounds + 1}`;
   }
 
   toast(text) {
