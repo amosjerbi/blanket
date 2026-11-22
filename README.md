@@ -1,7 +1,7 @@
 <p align="center">
   <img src="screenshots/menu.png" alt="Blanket Hill menu with Mochi raising wiggly arms" width="32%">
   <img src="screenshots/rolling.png" alt="Rolling toward a checkered blanket on the green hill" width="32%">
-  <img src="screenshots/snug.png" alt="A finished roll of 60 colorful blankets" width="32%">
+  <img src="screenshots/editor.png" alt="Character editor showing Mochi and her settings" width="32%">
 </p>
 
 # Blanket Hill
