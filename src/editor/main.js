@@ -397,7 +397,7 @@ $('spin').addEventListener('click', () => {
 
 $('apply-all').addEventListener('click', () => {
   const source = cast[index];
-  if (!confirm(`Copy ${source.name}'s face, proportions, Blanket Hill arms and bun setting to the other characters? Their colors, names and hair styles stay.`)) return;
+  if (!confirm(`Copy ${source.name}'s face, proportions, wiggly arms and bun setting to the other characters? Their colors, names and hair styles stay.`)) return;
   cast.forEach((c) => {
     if (c !== source) for (const key of SHARED_KEYS) c[key] = source[key];
   });

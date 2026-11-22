@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="screenshots/menu.png" alt="Blanket Hill menu with Mochi raising wiggly arms" width="32%">
+  <img src="screenshots/menu.png" alt="WRAP N' ROLL menu with Mochi raising wiggly arms" width="32%">
   <img src="screenshots/rolling.png" alt="Rolling toward a checkered blanket on the green hill" width="32%">
 </p>
 
-# Blanket Hill
+# WRAP N' ROLL
 
 Roll around a steep green hill and wrap yourself in every scattered blanket. Clear phases of 10, 20, 40 and 60 blankets. Puddles knock your outer blanket back onto the hill.
 

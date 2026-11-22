@@ -17,7 +17,7 @@ export const EYE_SHAPES = [
   { id: 'half', label: 'Half circle' },
 ];
 
-export const HILL_GROUP = 'Blanket Hill';
+export const HILL_GROUP = "WRAP N' ROLL";
 
 export const SLIDERS = [
   { group: 'Proportions', key: 'headSize', label: 'Head size', min: 0.6, max: 1.6, step: 0.01, value: 1 },
