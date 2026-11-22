@@ -242,7 +242,7 @@ class Game {
     const { player } = this;
     player.wrap(item);
     const count = player.layers.length;
-    this.sound.wrap(count - 1);
+    this.sound.wrap();
     $('pips').children[this.blankets.items.indexOf(item)].classList.add('on');
     this.showCount(count);
     if (count === this.goal) {
@@ -308,6 +308,7 @@ class Game {
       }
       if (this.mode === 'snug' && this.clock >= SNUG_SECONDS) this.newRound();
     }
+    this.sound.rustle(this.mode === 'roll' || this.mode === 'snug' ? player.speed : 0);
     if (this.mode === 'menu' || this.mode === 'intro') blankets.update(dt, this.time, { x: 1e6, z: 1e6, radius: 0, root: player.root });
     this.safe = Math.max(0, this.safe - dt);
     if (this.puddles.update(dt, player, this.mode === 'roll' && this.safe === 0)) this.splash();

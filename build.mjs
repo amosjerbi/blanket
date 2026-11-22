@@ -24,6 +24,7 @@ const { outputFiles } = await build({
   target: 'es2020',
   write: false,
   legalComments: 'none',
+  loader: { '.wav': 'binary', '.mp3': 'binary' },
   plugins: [remap],
 });
 

@@ -11,7 +11,7 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--ink); 
 button { font: inherit; color: inherit; border: 0; cursor: pointer; touch-action: manipulation; }
 button:focus-visible { outline: 2px solid var(--paper); outline-offset: 2px; }
 
-.screen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; text-align: center; padding: calc(env(safe-area-inset-top) + 34px) 14px calc(env(safe-area-inset-bottom) + 14px); pointer-events: none; }
+.screen { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; text-align: center; padding: calc(env(safe-area-inset-top) + 62px) 14px calc(env(safe-area-inset-bottom) + 14px); pointer-events: none; }
 .screen button, .screen a { pointer-events: auto; }
 .brand { animation: drop .36s steps(5) both; }
 .title { margin: 0; font-weight: 700; font-size: clamp(36px, 11.6vw, 60px); line-height: .92; text-shadow: 3px 3px 0 var(--ink); }
@@ -30,13 +30,17 @@ button:focus-visible { outline: 2px solid var(--paper); outline-offset: 2px; }
 #customize:focus-visible { outline: 2px solid var(--paper); outline-offset: 2px; }
 #btn-sound { position: absolute; top: calc(env(safe-area-inset-top) + 10px); right: 10px; display: grid; place-items: center; background: var(--ink); }
 #btn-sound svg { width: 20px; height: 20px; fill: currentColor; }
+#btn-github { position: absolute; top: calc(env(safe-area-inset-top) + 10px); right: 60px; display: grid; place-items: center; color: var(--paper); }
+#btn-github svg { width: 20px; height: 20px; fill: currentColor; }
+#btn-github:active { color: var(--ink); }
+#btn-github:focus-visible { outline: 2px solid var(--paper); outline-offset: 2px; }
 #btn-sound .mute { display: none; }
 #btn-sound[aria-pressed="false"] .waves { display: none; }
 #btn-sound[aria-pressed="false"] .mute { display: block; }
 @keyframes drop { from { opacity: 0; transform: translateY(-14px); } }
 @keyframes rise { from { opacity: 0; transform: translateY(16px); } }
 @media (max-height: 620px) {
-  .screen { padding-top: calc(env(safe-area-inset-top) + 14px); }
+  .screen { padding-top: calc(env(safe-area-inset-top) + 58px); }
   .title { font-size: 33px; }
   #char-name { font-size: 30px; }
   .ribbon { width: 120px; height: 7px; margin-top: 7px; }
