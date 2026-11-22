@@ -3,6 +3,8 @@
 :root { --ink: #262418; --paper: #fbf7f0; --mid: #7a6a4f; --accent: #f2c14e; }
 * { box-sizing: border-box; border-radius: 0; -webkit-tap-highlight-color: transparent; }
 html, body { margin: 0; height: 100%; overflow: hidden; background: var(--ink); color: var(--paper); font-family: Silk, ui-monospace, monospace; overscroll-behavior: none; user-select: none; -webkit-user-select: none; }
+/* Newer mobile browsers tint their bars from the page, so phones get the sky colour too. */
+@media (pointer: coarse) { html, body { background: #93c7f8; } }
 #stage { position: relative; height: 100dvh; width: min(100vw, calc(100dvh * 10 / 16)); margin: 0 auto; overflow: hidden; background: var(--ink); }
 #game { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; image-rendering: pixelated; }
 .hidden { display: none !important; }
