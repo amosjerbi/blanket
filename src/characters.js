@@ -12,10 +12,10 @@ const CHIN = Y - R;
 const TUNING = Object.fromEntries(SLIDERS.map((s) => [s.key, s.value]));
 
 export const BASE_CHARACTERS = [
-  { id: 'cutie', name: 'Cutie', tag: 'Idol boxer', expression: 'joy', skin: '#ffd3b4', hair: '#2f9bea', iris: '#2f9bea', lid: '#7fd8ee', top: '#f0562b', sleeve: '#f0562b', leg: '#ffffff', shoe: '#f0562b', hand: '#f0562b', detail: '#f8cb45', trim: '#e0262b', handSize: 1.8 },
-  { id: 'ren', name: 'Ren', tag: 'Cheerful wandering swordsman', expression: 'grin', skin: '#f2c19c', hair: '#17131f', iris: '#c8402f', lid: '#2f3a66', top: '#2f3a66', sleeve: '#2f3a66', leg: '#1f2747', shoe: '#c9a27e', hand: '#f2c19c', detail: '#1f2747', trim: '#c8402f' },
-  { id: 'mara', name: 'Mara', tag: 'Shrine maiden', expression: 'beam', skin: '#ffe0cc', hair: '#2c2438', iris: '#8a2f3f', lid: '#ff8f8f', top: '#ffffff', sleeve: '#ffffff', leg: '#e0262b', shoe: '#ffffff', hand: '#ffe0cc', detail: '#e0262b', trim: '#ffffff' },
-  { id: 'vera', name: 'Vera', tag: 'Magical girl on her day off', expression: 'wink', skin: '#ffe0cc', hair: '#ff7fb8', iris: '#8a5cd6', lid: '#c9a6ff', top: '#8a5cd6', sleeve: '#c9a6ff', leg: '#ffe0cc', shoe: '#ff7fb8', hand: '#ffe0cc', detail: '#c9a6ff', trim: '#ffd23c' },
+  { id: 'cutie', name: 'Mochi', tag: 'Idol boxer', expression: 'joy', skin: '#ffd3b4', hair: '#2f9bea', iris: '#2f9bea', lid: '#7fd8ee', top: '#f0562b', sleeve: '#f0562b', leg: '#ffffff', shoe: '#f0562b', hand: '#f0562b', detail: '#f8cb45', trim: '#e0262b', handSize: 1.8 },
+  { id: 'ren', name: 'Kuro', tag: 'Cheerful wandering swordsman', expression: 'grin', skin: '#f2c19c', hair: '#17131f', iris: '#c8402f', lid: '#2f3a66', top: '#2f3a66', sleeve: '#2f3a66', leg: '#1f2747', shoe: '#c9a27e', hand: '#f2c19c', detail: '#1f2747', trim: '#c8402f' },
+  { id: 'mara', name: 'Suzu', tag: 'Shrine maiden', expression: 'beam', skin: '#ffe0cc', hair: '#2c2438', iris: '#8a2f3f', lid: '#ff8f8f', top: '#ffffff', sleeve: '#ffffff', leg: '#e0262b', shoe: '#ffffff', hand: '#ffe0cc', detail: '#e0262b', trim: '#ffffff' },
+  { id: 'vera', name: 'Momo', tag: 'Magical girl on her day off', expression: 'wink', skin: '#ffe0cc', hair: '#ff7fb8', iris: '#8a5cd6', lid: '#c9a6ff', top: '#8a5cd6', sleeve: '#c9a6ff', leg: '#ffe0cc', shoe: '#ff7fb8', hand: '#ffe0cc', detail: '#c9a6ff', trim: '#ffd23c' },
 ].map((def) => ({ ...TUNING, hasBun: false, eyeShape: 'circle', ...def }));
 
 // Built-in designs, then the project's saved file, then edits saved in this browser.
