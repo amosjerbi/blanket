@@ -112,12 +112,13 @@ export class Blankets {
     return best;
   }
 
-  /** Lays out this phase's blankets and puts the rest away. */
-  scatter(count, playerX, playerZ, puddles) {
+  /** Lays out this phase's blankets, except those the roller is already wearing. */
+  scatter(count, playerX, playerZ, puddles, worn = new Set()) {
     for (const item of this.items) Object.assign(item, { waiting: false, fly: 0, landing: 0 });
     this.items.forEach((item, i) => {
-      if (i >= count) {
+      if (i >= count || worn.has(item)) {
         item.mesh.visible = false;
+        item.mesh.rotation.y = 0;
         return;
       }
       const spot = this.findSpot(playerX, playerZ, puddles, item);

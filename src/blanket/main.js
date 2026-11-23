@@ -10,7 +10,6 @@ import { Sound } from './sound.js';
 import { heightAt } from './terrain.js';
 
 const INTRO_SECONDS = 2.1;
-const SNUG_SECONDS = 3.2;
 const STICK_RANGE = 58;
 const SPLASH_SAFE_SECONDS = 1.2;
 const TOAST_SECONDS = 1.1;
@@ -126,14 +125,16 @@ class Game {
     const { player, puddles, blankets } = this;
     const { blankets: count, puddles: wet } = PHASES[this.phase];
     puddles.scatter(wet, player.x, player.z);
-    blankets.scatter(count, player.x, player.z, puddles.active);
+    const worn = new Set(player.layers.map((layer) => layer.item));
+    blankets.scatter(count, player.x, player.z, puddles.active, worn);
     $('pips').replaceChildren(...blankets.items.slice(0, count).map((item) => {
       const pip = document.createElement('i');
       pip.style.setProperty('--pip', item.design.a);
+      pip.classList.toggle('on', worn.has(item));
       return pip;
     }));
     $('pips').classList.toggle('dense', count > 20);
-    this.showCount(0);
+    this.showCount(worn.size);
     this.scenery.setClearings(blankets.items, puddles.items, player.x, player.z);
   }
 
@@ -150,6 +151,7 @@ class Game {
 
   bindInput() {
     $('btn-start').addEventListener('click', () => this.start());
+    $('btn-continue').addEventListener('click', () => this.newRound());
     const showSound = (on) => {
       $('btn-sound').setAttribute('aria-label', on ? 'Sound on' : 'Sound off');
       $('btn-sound').setAttribute('aria-pressed', on);
@@ -200,7 +202,7 @@ class Game {
   }
 
   showStick(x, y) {
-    if (this.mode !== 'roll' && this.mode !== 'snug') return;
+    if (this.mode !== 'roll') return;
     const el = $('stick');
     el.style.left = `${x}px`;
     el.style.top = `${y}px`;
@@ -249,10 +251,22 @@ class Game {
       this.mode = 'snug';
       this.clock = 0;
       this.rounds++;
+      this.safe = 0;
       this.sound.snug();
+      // View from the downhill side, so the hill never hides the upright bundle.
+      const { x: slopeX, z: slopeZ } = player.slope;
+      this.showAngle = Math.hypot(slopeX, slopeZ) > 0.03
+        ? Math.atan2(-slopeX, -slopeZ)
+        : Math.atan2(this.camera.position.x - player.x, this.camera.position.z - player.z);
+      player.startCelebration(this.showAngle);
+      $('stick').classList.add('hidden');
+      $('toast').classList.add('hidden');
+      $('hud').classList.add('hidden');
       $('snug').classList.remove('hidden');
-      const next = PHASES[Math.min(this.phase + 1, PHASES.length - 1)].blankets;
-      $('snug-count').textContent = `Next up: ${next} blankets`;
+      $('snug-title').replaceChildren('Congrats on', document.createElement('br'), `phase ${this.rounds}!`);
+      const next = PHASES[this.phase + 1]?.blankets;
+      $('snug-count').textContent = next ? `${count} wrapped. Next goal: ${next}` : `New round: ${count} blankets`;
+      $('btn-continue').focus({ preventScroll: true });
     }
   }
 
@@ -274,10 +288,14 @@ class Game {
   }
 
   newRound() {
+    if (this.mode !== 'snug') return;
+    // Blankets carry into the next phase. After the last phase there are none left to find, so it starts fresh.
+    if (this.phase === PHASES.length - 1) this.player.unwind();
     this.phase = Math.min(this.phase + 1, PHASES.length - 1);
-    this.player.unwind();
     this.setupPhase();
     $('snug').classList.add('hidden');
+    $('hud').classList.remove('hidden');
+    $('btn-continue').blur();
     this.mode = 'roll';
   }
 
@@ -299,17 +317,19 @@ class Game {
         player.vz = 3.5;
         this.mode = 'roll';
       }
+    } else if (this.mode === 'snug') {
+      player.celebrate(dt);
     } else {
+      player.layAmount = Math.min(1, player.layAmount + dt * 3); // Lies back down after a celebration.
       const steer = this.steer();
       player.update(dt, steer.x, steer.z, true);
       for (const item of blankets.update(dt, this.time, player)) {
         // Anything reached after the last blanket simply waits for the next phase.
         if (this.mode === 'roll') this.wrapBlanket(item);
       }
-      if (this.mode === 'snug' && this.clock >= SNUG_SECONDS) this.newRound();
     }
     this.sound.rustle(this.mode === 'roll' || this.mode === 'snug' ? player.speed : 0);
-    if (this.mode === 'menu' || this.mode === 'intro') blankets.update(dt, this.time, { x: 1e6, z: 1e6, radius: 0, root: player.root });
+    if (this.mode !== 'roll') blankets.update(dt, this.time, { x: 1e6, z: 1e6, radius: 0, root: player.root });
     this.safe = Math.max(0, this.safe - dt);
     if (this.puddles.update(dt, player, this.mode === 'roll' && this.safe === 0)) this.splash();
     player.root.visible = this.safe === 0 || Math.floor(this.safe * 12) % 2 === 0;
@@ -355,6 +375,10 @@ class Game {
       const near = 9 * player.def.hillSize;
       target.set(at.x, at.y + 0.7 + 6 * back, at.z + near - (near + 10) * back);
       focus.set(at.x, at.y + 0.2, at.z + 3 * back);
+    } else if (this.mode === 'snug') {
+      const distance = 9.4 * player.def.hillSize + player.radius * 2;
+      target.set(at.x + Math.sin(this.showAngle) * distance, at.y + 0.9, at.z + Math.cos(this.showAngle) * distance);
+      focus.set(at.x, at.y, at.z);
     } else {
       if (player.speed > 2) {
         const goal = Math.atan2(player.vx, player.vz);
@@ -378,7 +402,7 @@ class Game {
       focus.set(target.x + sin * 20, target.y + tilt * 20, target.z + cos * 20);
     }
     target.y = Math.max(target.y, heightAt(target.x, target.z) + 2.8);
-    const rate = 1 - Math.exp(-(this.mode === 'roll' || this.mode === 'snug' ? 6 : 4.5) * dt);
+    const rate = 1 - Math.exp(-(this.mode === 'roll' ? 6 : this.mode === 'snug' ? 3.5 : 4.5) * dt);
     camera.position.lerp(target, rate);
     camera.position.y = Math.max(camera.position.y, heightAt(camera.position.x, camera.position.z) + 2.2);
     look.lerp(focus, 1 - Math.exp(-8 * dt));

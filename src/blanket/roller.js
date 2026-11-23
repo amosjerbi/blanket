@@ -197,6 +197,30 @@ export class Roller {
     this.place();
   }
 
+  /** Prepares to stand up and face the given direction for the phase-complete screen. */
+  startCelebration(faceYaw) {
+    this.showYaw = faceYaw;
+    this.showRoll = Math.round(this.rollAngle / (Math.PI * 2)) * Math.PI * 2;
+  }
+
+  /** Slides to a stop, then stands the wrapped character upright, facing the camera. */
+  celebrate(dt) {
+    this.time.value += dt * this.def.hillWiggleSpeed;
+    this.updateLayers(dt);
+    const keep = Math.exp(-6 * dt);
+    this.vx *= keep;
+    this.vz *= keep;
+    this.x += this.vx * dt;
+    this.z += this.vz * dt;
+    this.keepInWorld();
+    const rate = 1 - Math.exp(-6 * dt);
+    this.yaw += shortAngle(this.showYaw - this.yaw) * rate;
+    this.rollAngle += (this.showRoll - this.rollAngle) * rate;
+    this.layAmount += (0 - this.layAmount) * rate;
+    this.armRig.wiggle.value = 0.3 * this.def.hillWiggle;
+    this.place();
+  }
+
   keepInWorld() {
     const r = Math.hypot(this.x, this.z);
     if (r <= WORLD_LIMIT) return;
@@ -221,14 +245,18 @@ export class Roller {
     const right = new THREE.Vector3().crossVectors(up, back).normalize();
     this.root.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(right, up, back));
 
-    const lift = this.standHeight + (this.radius - this.standHeight) * this.layAmount;
+    // Standing up, a wrapped bundle rests on its bottom edge rather than sinking into the hill.
+    const wrapped = this.layers.length ? this.wrapLength / 2 + 0.35 - this.wrapCenter : 0;
+    const stand = Math.max(this.standHeight, wrapped);
+    const lift = stand + (this.radius - stand) * this.layAmount;
     this.root.position.set(this.x, ground, this.z).addScaledVector(up, lift);
     this.lay.rotation.z = (-Math.PI / 2) * this.layAmount;
     this.spin.rotation.y = this.rollAngle;
 
     this.shadow.position.set(this.x, ground + 0.34, this.z).addScaledVector(normal, 0.05);
     this.shadow.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), normal);
-    const size = 0.3 + this.radius * 0.95;
+    // A standing bundle is viewed against the slope, so its shadow is drawn tighter.
+    const size = (0.3 + this.radius * 0.95) * (this.layers.length ? 0.72 + 0.28 * this.layAmount : 1);
     this.shadow.scale.set(size, size, 1);
   }
 }

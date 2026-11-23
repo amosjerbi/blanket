@@ -65,6 +65,5 @@ button:focus-visible { outline: 2px solid var(--paper); outline-offset: 2px; }
 #stick { position: absolute; width: 116px; height: 116px; margin: -58px 0 0 -58px; background: rgba(38, 36, 24, .3); box-shadow: inset 0 0 0 2px var(--paper); pointer-events: none; }
 #stick-thumb { position: absolute; left: 34px; top: 34px; width: 48px; height: 48px; background: var(--paper); }
 
-#snug { position: absolute; left: 0; right: 0; top: 19%; text-align: center; pointer-events: none; }
-#snug h2 { margin: 0; font-size: clamp(28px, 9vw, 38px); font-weight: 700; text-shadow: 3px 3px 0 var(--ink); }
-#snug p { display: inline-block; margin: 6px 0 0; padding: 3px 6px; background: var(--ink); font-size: 11px; }
+#snug h2 { margin: 0; font-size: clamp(26px, 8.6vw, 38px); font-weight: 700; line-height: 1; text-shadow: 3px 3px 0 var(--ink); }
+#snug p { display: inline-block; margin: 10px 0 0; padding: 3px 6px; background: var(--ink); font-size: 12px; }
