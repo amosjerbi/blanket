@@ -2,8 +2,8 @@
 import * as THREE from 'three';
 import { CHARACTERS } from '../characters.js';
 import { DitherPipeline, HERO_LAYER } from '../dither/pipeline.js';
-import { Blankets, DESIGNS, PHASES } from './blankets.js';
-import { Scenery, SKY_COLORS } from './grass.js';
+import { Blankets, DESIGNS, phaseAt } from './blankets.js';
+import { RAIN_COLORS, SAND_COLORS, Scenery, SKY_COLORS, SNOW_COLORS } from './grass.js';
 import { PUDDLE_COLORS, Puddles } from './puddles.js';
 import { Roller } from './roller.js';
 import { Sound } from './sound.js';
@@ -18,9 +18,17 @@ const MAX_LOOK_UP = 0.37; // Radians above the character, so they stay in frame.
 const PIXEL_WIDTH = 216; // The same resolution as the dither game.
 const CHARACTER_KEY = 'blanket-hill-character';
 const POINTER_COLOR = '#fff6dc';
+// Phase 1 is the green hill, 2 is desert dunes, 3 is snowy peaks, and 4 onwards is the green hill in the rain.
+const biomeAt = (phase) => ['green', 'desert', 'snow'][phase] ?? 'rain';
+const BIOMES = {
+  green: { fog: '#6f783d', shadow: '#2f3a22' },
+  snow: { fog: '#c4d3df', shadow: '#5a6878', toast: 'Snowy peaks!', next: ' on snowy peaks' },
+  desert: { fog: '#e6d3a8', shadow: '#8a6236', toast: 'Desert dunes!', next: ' in the desert' },
+  rain: { fog: '#7d8a78', shadow: '#263322', toast: 'Rainy hill!', next: ' in the rain' },
+};
 
 // The hill's colours, sampled from the grass reference, plus the blue sky.
-const HILL_PALETTE = ['#262418', '#3f4e2c', '#46562e', '#4f6532', '#5f7a33', '#616f37', '#6d8537', '#6f783d', '#7f9444', '#93a353', '#a9b766', ...SKY_COLORS];
+const HILL_PALETTE = ['#262418', '#3f4e2c', '#46562e', '#4f6532', '#5f7a33', '#616f37', '#6d8537', '#6f783d', '#7f9444', '#93a353', '#a9b766', ...SKY_COLORS, ...SNOW_COLORS, ...SAND_COLORS, ...RAIN_COLORS];
 const HERO_COLORS = [POINTER_COLOR, '#262418', '#ffffff', '#fbf7f0', '#17131f', ...PUDDLE_COLORS, ...DESIGNS.flatMap((d) => [d.a, d.b])];
 
 const readCharacter = () => {
@@ -118,12 +126,13 @@ class Game {
     try { localStorage.setItem(CHARACTER_KEY, def.id); } catch { /* Storage can be unavailable. */ }
   }
 
-  get goal() { return PHASES[this.phase].blankets; }
+  get goal() { return phaseAt(this.phase).blankets; }
 
   /** Scatters this phase's puddles and blankets and resets the progress display. */
   setupPhase() {
     const { player, puddles, blankets } = this;
-    const { blankets: count, puddles: wet } = PHASES[this.phase];
+    const { blankets: count, puddles: wet } = phaseAt(this.phase);
+    this.setBiome(biomeAt(this.phase));
     puddles.scatter(wet, player.x, player.z);
     const worn = new Set(player.layers.map((layer) => layer.item));
     blankets.scatter(count, player.x, player.z, puddles.active, worn);
@@ -133,9 +142,21 @@ class Game {
       pip.classList.toggle('on', worn.has(item));
       return pip;
     }));
-    $('pips').classList.toggle('dense', count > 20);
+    $('pips').classList.toggle('dense', count > 20 && count <= 80);
+    $('pips').classList.toggle('tiny', count > 80);
     this.showCount(worn.size);
     this.scenery.setClearings(blankets.items, puddles.items, player.x, player.z);
+  }
+
+  /** Changes the landscape, along with the haze and shadow colours. */
+  setBiome(biome) {
+    if (biome === (this.biome ?? 'green')) return;
+    this.biome = biome;
+    const look = BIOMES[biome];
+    this.scenery.setBiome(biome);
+    this.scene.fog.color.set(look.fog);
+    this.player.shadow.material.color.set(look.shadow);
+    if (look.toast && this.mode !== 'menu') this.toast(look.toast);
   }
 
   showCount(count) {
@@ -264,8 +285,10 @@ class Game {
       $('hud').classList.add('hidden');
       $('snug').classList.remove('hidden');
       $('snug-title').replaceChildren('Congrats on', document.createElement('br'), `phase ${this.rounds}!`);
-      const next = PHASES[this.phase + 1]?.blankets;
-      $('snug-count').textContent = next ? `${count} wrapped. Next goal: ${next}` : `New round: ${count} blankets`;
+      const next = phaseAt(this.phase + 1).blankets;
+      const biome = biomeAt(this.phase + 1);
+      const where = biome !== biomeAt(this.phase) ? BIOMES[biome].next : '';
+      $('snug-count').textContent = next > count ? `${count} wrapped. Next goal: ${next}${where}` : `New round: ${next} blankets`;
       $('btn-continue').focus({ preventScroll: true });
     }
   }
@@ -289,9 +312,9 @@ class Game {
 
   newRound() {
     if (this.mode !== 'snug') return;
-    // Blankets carry into the next phase. After the last phase there are none left to find, so it starts fresh.
-    if (this.phase === PHASES.length - 1) this.player.unwind();
-    this.phase = Math.min(this.phase + 1, PHASES.length - 1);
+    // Blankets carry into the next phase. Once the goal stops growing there are none left to find, so it starts fresh.
+    if (phaseAt(this.phase + 1).blankets <= this.goal) this.player.unwind();
+    this.phase++;
     this.setupPhase();
     $('snug').classList.add('hidden');
     $('hud').classList.remove('hidden');

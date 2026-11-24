@@ -3,14 +3,18 @@ import * as THREE from 'three';
 import { toonOptions } from '../models.js';
 import { heightAt } from './terrain.js';
 
-// The last phase repeats once it is reached.
-export const PHASES = [
+const PHASES = [
   { blankets: 10, puddles: 6 },
   { blankets: 20, puddles: 10 },
   { blankets: 40, puddles: 14 },
   { blankets: 60, puddles: 18 },
 ];
-const MAX_BLANKETS = PHASES.at(-1).blankets;
+// After the listed phases, every phase adds 20 more blankets, up to the most the hills can hold.
+export const MAX_BLANKETS = 160;
+export const phaseAt = (i) => PHASES[i] ?? {
+  blankets: Math.min(MAX_BLANKETS, PHASES.at(-1).blankets + 20 * (i - PHASES.length + 1)),
+  puddles: PHASES.at(-1).puddles,
+};
 const WAVE_RANGE = 48; // Only nearby blankets ripple, which keeps big phases smooth.
 const WIDTH = 4.6;
 const LENGTH = 3.6;
@@ -45,11 +49,14 @@ const mixedDesign = (i) => {
   while (Math.abs(luma(a) - luma(SHADES[(i + step) % SHADES.length])) < 0.18) step++;
   return { a, b: SHADES[(i + step) % SHADES.length], kind: KINDS[(i + Math.floor(i / 3)) % 3] };
 };
-const ALL_DESIGNS = [
-  ...DESIGNS,
-  ...DESIGNS.map((d) => ({ a: d.b, b: d.a, kind: KINDS[(KINDS.indexOf(d.kind) + 1) % 3] })),
-  ...Array.from({ length: MAX_BLANKETS - 20 }, (_, i) => mixedDesign(i)),
-];
+const designAt = (i) => {
+  if (i < DESIGNS.length) return DESIGNS[i];
+  if (i < DESIGNS.length * 2) {
+    const d = DESIGNS[i - DESIGNS.length];
+    return { a: d.b, b: d.a, kind: KINDS[(KINDS.indexOf(d.kind) + 1) % 3] };
+  }
+  return mixedDesign(i - DESIGNS.length * 2);
+};
 
 export function patternTexture({ a, b, kind }) {
   const S = 128;
@@ -80,17 +87,27 @@ export function patternTexture({ a, b, kind }) {
 
 export class Blankets {
   constructor(scene) {
-    this.items = ALL_DESIGNS.map((design) => {
-      const map = patternTexture(design);
-      const geometry = new THREE.PlaneGeometry(WIDTH, LENGTH, SEGMENTS, SEGMENTS);
-      geometry.rotateX(-Math.PI / 2);
-      const uv = geometry.attributes.uv;
-      for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * 2, uv.getY(i) * 1.6);
-      const mesh = new THREE.Mesh(geometry, new THREE.MeshToonMaterial({ ...toonOptions, map, side: THREE.DoubleSide }));
-      mesh.frustumCulled = false;
-      scene.add(mesh);
-      return { design, map, mesh, flat: geometry.attributes.position.array.slice(), x: 0, z: 0, waiting: false, fly: 0, landing: 0 };
-    });
+    this.scene = scene;
+    this.items = [];
+    this.spread = 56;
+    this.ensure(PHASES.at(-1).blankets);
+  }
+
+  /** Makes blankets until there are at least `count`, so big phases only build what they need. */
+  ensure(count) {
+    while (this.items.length < count) this.items.push(this.make(designAt(this.items.length)));
+  }
+
+  make(design) {
+    const map = patternTexture(design);
+    const geometry = new THREE.PlaneGeometry(WIDTH, LENGTH, SEGMENTS, SEGMENTS);
+    geometry.rotateX(-Math.PI / 2);
+    const uv = geometry.attributes.uv;
+    for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * 2, uv.getY(i) * 1.6);
+    const mesh = new THREE.Mesh(geometry, new THREE.MeshToonMaterial({ ...toonOptions, map, side: THREE.DoubleSide }));
+    mesh.frustumCulled = false;
+    this.scene.add(mesh);
+    return { design, map, mesh, flat: geometry.attributes.position.array.slice(), x: 0, z: 0, waiting: false, fly: 0, landing: 0 };
   }
 
   /** The most open spot found, away from the roller, other blankets and puddles. */
@@ -100,7 +117,7 @@ export class Blankets {
     let bestRoom = -Infinity;
     for (let tries = 0; tries < 60 && bestRoom < 0; tries++) {
       const angle = Math.random() * Math.PI * 2;
-      const r = 12 + Math.random() * 56;
+      const r = 12 + Math.random() * this.spread;
       const x = Math.sin(angle) * r, z = Math.cos(angle) * r;
       const room = Math.min(
         Math.hypot(x - playerX, z - playerZ) - 13,
@@ -114,6 +131,9 @@ export class Blankets {
 
   /** Lays out this phase's blankets, except those the roller is already wearing. */
   scatter(count, playerX, playerZ, puddles, worn = new Set()) {
+    this.ensure(count);
+    // Bigger phases spread further out, so the blankets keep some room.
+    this.spread = Math.min(80, 56 + Math.max(0, count - 60) * 0.25);
     for (const item of this.items) Object.assign(item, { waiting: false, fly: 0, landing: 0 });
     this.items.forEach((item, i) => {
       if (i >= count || worn.has(item)) {

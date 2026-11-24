@@ -55,6 +55,9 @@ button:focus-visible { outline: 2px solid var(--paper); outline-offset: 2px; }
 #pips.dense { grid-template-columns: repeat(20, 8px); gap: 2px; }
 #pips.dense i { width: 8px; height: 8px; }
 #pips.dense i.on { box-shadow: inset 0 0 0 1px #fff; }
+#pips.tiny { grid-template-columns: repeat(32, 5px); gap: 1px; }
+#pips.tiny i { width: 5px; height: 5px; }
+#pips.tiny i.on { box-shadow: none; }
 #count { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 2px 6px; font-variant-numeric: tabular-nums; text-shadow: 2px 2px 0 var(--ink); }
 #count-amount { font-size: 26px; font-weight: 700; line-height: 1.05; }
 #count-phase { font-size: 13px; line-height: 1.1; }
